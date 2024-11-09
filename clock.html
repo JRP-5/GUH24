@@ -28,6 +28,8 @@
     <div id="clockContainer">
         <canvas id="clockCanvas" width="200" height="200"></canvas>
         <div id="digitalClock"></div>
+        <br>
+        <input type="date" id="calendar">
     </div>
 </body>
 </html>
@@ -148,8 +150,18 @@ canvas.addEventListener('mouseup', () => {
 drawClock();
 
 function updateDigitalClock() {
-    const hours = currentHours.toString().padStart(2, '0');
-    const minutes = currentMinutes.toString().padStart(2, '0');
+    var digitalMinutes = Math.round(currentMinutes / 30) * 30;
+    var digitalHours = currentHours;
+    if (digitalMinutes == 60) {
+        digitalMinutes = 0;
+        digitalHours++;
+        if (digitalHours == 24) {
+            digitalHours = 0;
+        }
+    }
+    const minutes = digitalMinutes.toString().padStart(2, '0');
+    const hours = digitalHours.toString().padStart(2, '0');
+    
     document.getElementById('digitalClock').innerText = `${hours}:${minutes}`;
 }
 
@@ -161,4 +173,16 @@ function redraw() {
 
 // Initial digital clock update
 updateDigitalClock();
+</script>
+<div id="calendarContainer">
+    
+</div>
+
+<script>
+document.getElementById('calendar').addEventListener('change', (event) => {
+    const selectedDate = new Date(event.target.value);
+    currentHours = selectedDate.getHours();
+    currentMinutes = selectedDate.getMinutes();
+    redraw();
+});
 </script>
