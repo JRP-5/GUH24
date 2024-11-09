@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Google Maps with Gradient Roads</title>
+    <style>
+        /* Set the size of the div element that contains the map */
+        #map {
+            height: 400px;
+            width: 100%;
+        }
+    </style>
+    
+    <script src= "{{ url_for('static', filename='script.js') }}" ></script>
+        <script src="https://maps.googleapis.com/maps/api/js?key={{ dik }}&callback=initMap" async defer></script>
+    
+</head>
+<body>
+
+<h3>Google Map with Gradient-Colored Roads</h3>
+
+<!-- The div element for the map -->
+<div id="map"></div>
+
+
+</body>
+</html>
