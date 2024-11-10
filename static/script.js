@@ -7,24 +7,13 @@ function initMap(){
     map = new google.maps.Map(document.getElementById('map'), {
         zoom: 13,
         center: {lat: 51.505, lng: -0.09}
-        // ,
-        // styles: [
-        //     {
-        //         featureType: "poi",
-        //         stylers: [{ visibility: "on" }] // Hides all POIs
-        //     }
-        //    ]
-    });
-    const cen = new google.maps.LatLng(51.515, -0.09);
-    const cityCircle = new google.maps.Circle({
-        fillColor: "#FF0000",  // Red color
-        fillOpacity: 0.35,
-        strokeColor: "#FF0000", // Red stroke color
-        strokeOpacity: 0.8,
-        strokeWeight: 2,
-        map: map,
-        center: cen,
-        radius: 500 // Radius in meters
+        ,
+        styles: [
+            {
+                featureType: "poi",
+                stylers: [{ visibility: "on" }] // Hides all POIs
+            }
+           ]
     });
     google.maps.event.addListener(map, 'bounds_changed', function() {
         var bounds = map.getBounds();
@@ -54,18 +43,17 @@ function togglePOI(){
     }
 }
 function visualise(){
-    console.log("Called");
     points = [
-    // [51.505, -0.09, 1], 
-    // [51.506, -0.08, 4],
-    // [51.507, -0.07, -2], 
+    [51.505, -0.09, 1], 
+    [51.506, -0.08, 4],
+    [51.507, -0.07, -2], 
     [51.515,-0.09, 2]
     ];
     colourBusy(points);
 }
 function colourBusy(points){
     
-    console.log("Called2");//lat, lon
+    
     //     {path: [], distanceFromCenter: 0}
     //     {path: [{lat: 51.507, lng: -0.07}, {lat: 51.508, lng: -0.06}], distanceFromCenter: 1},
     var average = 0;
@@ -97,11 +85,11 @@ function colourBusy(points){
     fetch(url)
         .then(response => response.json())
         .then(data => {
-            
-            for(let i = 0; i < 0; i++){
+  
+            for(let i = 0; i < data.snappedPoints.length; i++){
                 var centre = {lat : data.snappedPoints[i].location["latitude"], lng :data.snappedPoints[i].location["longitude"] }
                 var rgb = colours[data.snappedPoints[i].originalIndex];
-                console.log(rgb);
+               
                 
                 var cityCircle = new google.maps.Circle({
                     strokeColor: rgb,     // Border color
@@ -111,7 +99,7 @@ function colourBusy(points){
                     fillOpacity: 0.5,          // Fill opacity
                     map: map,
                     center: centre,             // Center of the circle
-                    radius: 60             
+                    radius: 3000/map.getZoom()             
                 });
             }
             // You can now use this data to draw road segments on your map
