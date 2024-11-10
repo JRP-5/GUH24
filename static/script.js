@@ -4,17 +4,27 @@ function init(k){
     key = k;
 }
 function initMap(){
-    //document.write("WJUBU");
-    //var key = {{ my_flask_dict }};
     map = new google.maps.Map(document.getElementById('map'), {
-        zoom: 15,
-        center: {lat: 51.505, lng: -0.09},
-        styles: [
-            {
-                featureType: "poi",
-                stylers: [{ visibility: "off" }] // Hides all POIs
-            }
-        ]
+        zoom: 13,
+        center: {lat: 51.505, lng: -0.09}
+        // ,
+        // styles: [
+        //     {
+        //         featureType: "poi",
+        //         stylers: [{ visibility: "on" }] // Hides all POIs
+        //     }
+        //    ]
+    });
+    const cen = new google.maps.LatLng(51.515, -0.09);
+    const cityCircle = new google.maps.Circle({
+        fillColor: "#FF0000",  // Red color
+        fillOpacity: 0.35,
+        strokeColor: "#FF0000", // Red stroke color
+        strokeOpacity: 0.8,
+        strokeWeight: 2,
+        map: map,
+        center: cen,
+        radius: 500 // Radius in meters
     });
     google.maps.event.addListener(map, 'bounds_changed', function() {
         var bounds = map.getBounds();
@@ -24,10 +34,10 @@ function initMap(){
         const nw = { lat: ne.lat(), lng: sw.lng() }; // northwest corner
         const se = { lat: sw.lat(), lng: ne.lng() }; // southeast corner
 
-        console.log("Northeast (NE):", ne.toString());
-        console.log("Southwest (SW):", sw.toString());
-        console.log("Northwest (NW):", nw);
-        console.log("Southeast (SE):", se);
+        // console.log("Northeast (NE):", ne.toString());
+        // console.log("Southwest (SW):", sw.toString());
+        // console.log("Northwest (NW):", nw);
+        // console.log("Southeast (SE):", se);
     });
 }
 
@@ -44,16 +54,18 @@ function togglePOI(){
     }
 }
 function visualise(){
+    console.log("Called");
     points = [
-    [51.505, -0.09, 1], 
-    [51.506, -0.08, 4],
-    [51.507, -0.07, -2], 
+    // [51.505, -0.09, 1], 
+    // [51.506, -0.08, 4],
+    // [51.507, -0.07, -2], 
     [51.515,-0.09, 2]
     ];
     colourBusy(points);
 }
 function colourBusy(points){
-    //lat, lon
+    
+    console.log("Called2");//lat, lon
     //     {path: [], distanceFromCenter: 0}
     //     {path: [{lat: 51.507, lng: -0.07}, {lat: 51.508, lng: -0.06}], distanceFromCenter: 1},
     var average = 0;
@@ -77,28 +89,30 @@ function colourBusy(points){
         var rgb= interpolateColor(points[i][2], min, max);
         colours.push(rgb);
     }
-    //console.log(colours);
-    //return;
+    
+    
+
     const url = `https://roads.googleapis.com/v1/nearestRoads?points=${input.join('|')}&key=${key}`;
 
     fetch(url)
         .then(response => response.json())
         .then(data => {
- 
-            for(let i = 0; i < data.snappedPoints.length; i++){
+            
+            for(let i = 0; i < 0; i++){
                 var centre = {lat : data.snappedPoints[i].location["latitude"], lng :data.snappedPoints[i].location["longitude"] }
-                var rgb = colours[i];
-                //console.log([r,g,b]);
+                var rgb = colours[data.snappedPoints[i].originalIndex];
+                console.log(rgb);
+                
                 var cityCircle = new google.maps.Circle({
                     strokeColor: rgb,     // Border color
                     strokeOpacity: 0.8,         // Border opacity
                     strokeWeight: 2,            // Border thickness
                     fillColor: rgb,       // Fill color
-                    fillOpacity: 1,          // Fill opacity
+                    fillOpacity: 0.5,          // Fill opacity
                     map: map,
                     center: centre,             // Center of the circle
-                    radius: 600/map.getZoom()             // Radius in meters (5 km in this case)
-                    });
+                    radius: 60             
+                });
             }
             // You can now use this data to draw road segments on your map
             //document.write(response)
