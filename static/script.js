@@ -29,31 +29,19 @@ function initMap(){
         console.log("Northwest (NW):", nw);
         console.log("Southeast (SE):", se);
     });
+}
 
-
-    var roadSegments = [
-        {path: [{lat: 51.505, lng: -0.09}, {lat: 51.506, lng: -0.08}], distanceFromCenter: 0}
-        //{path: [{lat: 51.507, lng: -0.07}, {lat: 51.508, lng: -0.06}], distanceFromCenter: 1},
-        // Add more segments...
-    ];
-
-    // Calculate maximum distance for normalization
-    var maxDistance = Math.max(...roadSegments.map(s => s.distanceFromCenter));
-
-    // Apply gradient coloring based on distance from center
-    roadSegments.forEach(function(segment) {
-        var normalizedDistance = segment.distanceFromCenter / maxDistance;
-        var color = interpolateColor('#00f', '#f00', normalizedDistance); // Blue to red
-
-        new google.maps.Polyline({
-            path: segment.path,
-            strokeColor: color,
-            strokeOpacity: 1,
-            strokeWeight: 4,
-            map: map
-        });
-    });
-
+function togglePOI(){
+    if(map.styles[0].stylers[0].visibility == "off"){
+        styles = map.styles;
+        styles[0].stylers[0].visibility = "on";
+        map.setOptions({styles:styles});
+    }
+    else{
+        styles = map.styles;
+        styles[0].stylers[0].visibility = "off";
+        map.setOptions({styles:styles});
+    }
 }
 function visualise(){
     points = [
@@ -109,7 +97,7 @@ function colourBusy(points){
                     fillOpacity: 1,          // Fill opacity
                     map: map,
                     center: centre,             // Center of the circle
-                    radius: 600/map.getZoom()              // Radius in meters (5 km in this case)
+                    radius: 600/map.getZoom()             // Radius in meters (5 km in this case)
                     });
             }
             // You can now use this data to draw road segments on your map
