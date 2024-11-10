@@ -4,8 +4,8 @@ function init(k){
     key = k;
 }
 function initMap(){
-    //var key = {{ dik }};
-    
+    //document.write("WJUBU");
+    //var key = {{ my_flask_dict }};
     map = new google.maps.Map(document.getElementById('map'), {
         zoom: 15,
         center: {lat: 51.505, lng: -0.09},
@@ -16,19 +16,44 @@ function initMap(){
             }
         ]
     });
-    
-}
-function togglePOI(){
-    if(map.styles[0].stylers[0].visibility == "off"){
-        styles = map.styles;
-        styles[0].stylers[0].visibility = "on";
-        map.setOptions({styles:styles});
-    }
-    else{
-        styles = map.styles;
-        styles[0].stylers[0].visibility = "off";
-        map.setOptions({styles:styles});
-    }
+    google.maps.event.addListener(map, 'bounds_changed', function() {
+        var bounds = map.getBounds();
+        var ne = bounds.getNorthEast(); // Northeast corner
+        var sw = bounds.getSouthWest(); // Southwest corner
+
+        const nw = { lat: ne.lat(), lng: sw.lng() }; // northwest corner
+        const se = { lat: sw.lat(), lng: ne.lng() }; // southeast corner
+
+        console.log("Northeast (NE):", ne.toString());
+        console.log("Southwest (SW):", sw.toString());
+        console.log("Northwest (NW):", nw);
+        console.log("Southeast (SE):", se);
+    });
+
+
+    var roadSegments = [
+        {path: [{lat: 51.505, lng: -0.09}, {lat: 51.506, lng: -0.08}], distanceFromCenter: 0}
+        //{path: [{lat: 51.507, lng: -0.07}, {lat: 51.508, lng: -0.06}], distanceFromCenter: 1},
+        // Add more segments...
+    ];
+
+    // Calculate maximum distance for normalization
+    var maxDistance = Math.max(...roadSegments.map(s => s.distanceFromCenter));
+
+    // Apply gradient coloring based on distance from center
+    roadSegments.forEach(function(segment) {
+        var normalizedDistance = segment.distanceFromCenter / maxDistance;
+        var color = interpolateColor('#00f', '#f00', normalizedDistance); // Blue to red
+
+        new google.maps.Polyline({
+            path: segment.path,
+            strokeColor: color,
+            strokeOpacity: 1,
+            strokeWeight: 4,
+            map: map
+        });
+    });
+
 }
 function visualise(){
     points = [
