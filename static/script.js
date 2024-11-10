@@ -7,6 +7,20 @@ function initMap(){
         center: {lat: 51.505, lng: -0.09}
     });
 
+    google.maps.event.addListener(map, 'bounds_changed', function() {
+        var bounds = map.getBounds();
+        var ne = bounds.getNorthEast(); // Northeast corner
+        var sw = bounds.getSouthWest(); // Southwest corner
+
+        const nw = { lat: ne.lat(), lng: sw.lng() }; // northwest corner
+        const se = { lat: sw.lat(), lng: ne.lng() }; // southeast corner
+
+        console.log("Northeast (NE):", ne.toString());
+        console.log("Southwest (SW):", sw.toString());
+        console.log("Northwest (NW):", nw);
+        console.log("Southeast (SE):", se);
+    });
+
     var roadSegments = [
         {path: [{lat: 51.505, lng: -0.09}, {lat: 51.506, lng: -0.08}], distanceFromCenter: 0}
         //{path: [{lat: 51.507, lng: -0.07}, {lat: 51.508, lng: -0.06}], distanceFromCenter: 1},
