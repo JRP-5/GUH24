@@ -13,3 +13,4 @@ def hello_world():
     load_dotenv(".env")
     k = os.environ.get("MAPS_KEY")
     return render_template("index.html", dik=k)
+
