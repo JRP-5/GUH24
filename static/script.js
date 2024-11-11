@@ -1,13 +1,14 @@
 var key = "";
 var map;
+var times;
+var shapes = [];
 function init(k){
     key = k;
 }
 function initMap(){
     map = new google.maps.Map(document.getElementById('map'), {
         zoom: 13,
-        center: {lat: 51.505, lng: -0.09}
-        ,
+        center: {lat: 51.555973, lng:  -0.279672},
         styles: [
             {
                 featureType: "poi",
@@ -24,7 +25,7 @@ function initMap(){
         const se = { lat: sw.lat(), lng: ne.lng() }; // southeast corner
 
         // console.log("Northeast (NE):", ne.toString());
-        // console.log("Southwest (SW):", sw.toString());
+        // console.log("Southwest (SW):", sw.toStrFg());
         // console.log("Northwest (NW):", nw);
         // console.log("Southeast (SE):", se);
     });
@@ -43,13 +44,26 @@ function togglePOI(){
     }
 }
 function visualise(){
-    points = [
-    [51.505, -0.09, 1], 
-    [51.506, -0.08, 4],
-    [51.507, -0.07, -2], 
-    [51.515,-0.09, 2]
-    ];
-    colourBusy(points);
+    if(times == null){
+        fetch("/getData")
+        .then(response => response.json())
+        .then(data => {
+            times = data;
+            // data is a parsed JSON object
+        });
+    }
+
+
+    for(let i = 0; i < shapes.length; i++){
+        shapes[i].setMap(null);
+    }
+    shapes = [];
+    //console.log(times[hour]);
+    var hour = document.getElementById("digitalClock").innerHTML.substring(0,2);
+    //hour = currentHours.toString();
+    console.log(times[hour]);
+    
+    colourBusy(times[hour]);
 }
 function colourBusy(points){
     
@@ -74,7 +88,17 @@ function colourBusy(points){
     colours = []
     for(let i = 0; i < points.length; i++){
         input.push(points[i][0] + ", " + points[i][1]);
-        var rgb= interpolateColor(points[i][2], min, max);
+        var rgb= interpolateColor(points[i][2] + currentHours/2, min, max);
+        if(document.getElementById("digitalClock").innerHTML.substring(0,2) == "07"){
+            rgb = `rgb(255, 100, 0)`;
+        }
+        if(document.getElementById("digitalClock").innerHTML.substring(0,2) == "04"){
+            rgb = `rgb(175, 100, 0)`;
+        }
+        if(document.getElementById("digitalClock").innerHTML.substring(0,2) == "05"){
+            rgb = `rgb(255, 100, 0)`;
+        }
+        //rgb = `rgb(${(1- points[i][2]/8 )* 255}, ${points[i][2]/8 * 255}, 0)`
         colours.push(rgb);
     }
     
@@ -96,11 +120,12 @@ function colourBusy(points){
                     strokeOpacity: 0.8,         // Border opacity
                     strokeWeight: 2,            // Border thickness
                     fillColor: rgb,       // Fill color
-                    fillOpacity: 0.5,          // Fill opacity
+                    fillOpacity: 0.4,          // Fill opacity
                     map: map,
                     center: centre,             // Center of the circle
-                    radius: 3000/map.getZoom()             
+                    radius: 1500/map.getZoom()             
                 });
+                shapes.push(cityCircle);
             }
             // You can now use this data to draw road segments on your map
             //document.write(response)

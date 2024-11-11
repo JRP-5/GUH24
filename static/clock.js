@@ -132,6 +132,9 @@ function redraw() {
     ctx.clearRect(-radius, -radius, canvas.width, canvas.height);
     drawClock();
     updateDigitalClock();
+    if(shapes.length != 0){
+        visualise();
+    }
 }
 
 // Initial digital clock update
